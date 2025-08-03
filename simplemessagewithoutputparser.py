@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage,SystemMessage
+from langchain_core.output_parsers import StrOutputParser
 
 
 load_dotenv()
@@ -18,6 +19,9 @@ messages = [
     )
 ]
 
+parser = StrOutputParser()
+
+chain = model | parser
+
 if __name__ == "__main__":
-    response = model.invoke(messages)
-    print(response.content)
+    print(chain.invoke(messages))
