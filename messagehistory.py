@@ -19,6 +19,7 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
         store[session_id] = InMemoryChatMessageHistory()
     return store[session_id]
 
+
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system","You are a helpful assistant.Answer all questions to the best of your ability."),
@@ -32,10 +33,20 @@ with_history = RunnableWithMessageHistory(chain, get_session_history)
 if __name__ == "__main__":
     while True:
         user_input = input(">")
-        response = with_history.invoke(
+        for r in with_history.stream(
             [
                 HumanMessage(content=user_input)
             ],
             config=config
-        )
-        print(response.content)
+        ):
+            print(r.content, end='')  # 
+            
+    # # Print session history
+    #     session_history = get_session_history("nejo")
+    #     print("\n--- Session History ---")
+    #     for i, message in enumerate(session_history.messages):
+    #         if isinstance(message, HumanMessage):
+    #             print(f"{i+1}. Human: {message.content}")
+    #         elif isinstance(message, AIMessage):
+    #             print(f"{i+1}. AI: {message.content}")
+    #     print("--- End History ---\n")
